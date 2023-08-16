@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-#if UNITY_EDITOR_OSX
+#if UNITY_EDITOR_OSX || (UNITY_EDITOR && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
 using UnityEditor.iOS.Xcode;
 #endif
 
@@ -14,7 +14,7 @@ namespace Apple.Core
     public class AppleBuildStep : ScriptableObject
     {
         public bool IsEnabled = true;
-        
+
         public virtual string DisplayName => GetType().Name;
 
         /// <summary>
@@ -23,13 +23,14 @@ namespace Apple.Core
         public static IEnumerable<Type> ProjectAppleBuildStepTypes()
         {
             var appleBuildStepTypes = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                                                    from type in assembly.GetTypes()
-                                                    where typeof(AppleBuildStep).IsAssignableFrom(type) && type != typeof(AppleBuildStep)
-                                                    select type;
+                                      from type in assembly.GetTypes()
+                                      where typeof(AppleBuildStep).IsAssignableFrom(type) && type != typeof(AppleBuildStep)
+                                      select type;
 
             return appleBuildStepTypes;
         }
 
+#if UNITY_EDITOR_OSX || (UNITY_EDITOR && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
         /// <summary>
         /// Called at the beginning of performing build post process. This is invoked first for all steps.
         /// </summary>
@@ -80,5 +81,6 @@ namespace Apple.Core
         /// <param name="buildTarget"></param>
         /// <param name="pathToBuiltProject"></param>
         public virtual void OnFinalizePostProcess(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltProject) { }
+#endif
     }
 }
