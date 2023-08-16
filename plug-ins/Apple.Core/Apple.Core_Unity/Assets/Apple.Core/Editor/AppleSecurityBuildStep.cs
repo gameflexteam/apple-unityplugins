@@ -1,5 +1,7 @@
 using UnityEditor;
+#if UNITY_EDITOR_OSX || (UNITY_EDITOR && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
 using UnityEditor.iOS.Xcode;
+#endif
 using UnityEngine;
 
 namespace Apple.Core
@@ -7,17 +9,17 @@ namespace Apple.Core
     public class AppleSecurityBuildStep : AppleBuildStep
     {
         public override string DisplayName => "Security";
-        
+
         [Tooltip("If true, will add the com.apple.security.app-sandbox entitlement.")]
         public bool AppSandboxEntitlement = true;
 
-        [Header("Network")] 
+        [Header("Network")]
         [Tooltip("A Boolean value indicating whether your app may listen for incoming network connections.")]
         public bool AllowNetworkServer;
         [Tooltip("A Boolean value indicating whether your app may open outgoing network connections.")]
         public bool AllowNetworkClient;
 
-        [Header("Hardware")] 
+        [Header("Hardware")]
         [Tooltip("A Boolean value that indicates whether the app may capture movies and still images using the built-in camera.")]
         public bool AllowCamera;
         [Tooltip("A Boolean value that indicates whether the app may use the microphone.")]
@@ -29,7 +31,7 @@ namespace Apple.Core
         [Tooltip("A Boolean value indicating whether your app may interact with Bluetooth devices.")]
         public bool AllowBluetooth;
 
-        [Header("AppData")] 
+        [Header("AppData")]
         [Tooltip("A Boolean value that indicates whether the app may have read-write access to contacts in the user's address book.")]
         public bool AllowAddressBook;
         [Tooltip("A Boolean value that indicates whether the app may access location information from Location Services.")]
@@ -37,7 +39,7 @@ namespace Apple.Core
         [Tooltip("A Boolean value that indicates whether the app may have read-write access to the user's calendar.")]
         public bool AllowCalendars;
 
-        [Header("File Access")] 
+        [Header("File Access")]
         [Tooltip("A Boolean value that indicates whether the app may have read-only access to files the user has selected using an Open or Save dialog.")]
         public bool AllowUserSelectedReadOnly;
         [Tooltip("A Boolean value that indicates whether the app may have read-write access to files the user has selected using an Open or Save dialog.")]
@@ -50,7 +52,7 @@ namespace Apple.Core
         public bool AllowPicturesReadOnly;
         [Tooltip("A Boolean value that indicates whether the app may have read-write access to the Pictures folder.")]
         public bool AllowPicturesReadWrite;
-        [Tooltip("A Boolean value that indicates whether the app may have read-only access to the Music folder.")] 
+        [Tooltip("A Boolean value that indicates whether the app may have read-only access to the Music folder.")]
         public bool AllowMusicReadOnly;
         [Tooltip("A Boolean value that indicates whether the app may have read-write access to the Music folder.")]
         public bool AllowMusicReadWrite;
@@ -59,74 +61,76 @@ namespace Apple.Core
         [Tooltip("A Boolean value that indicates whether the app may have read-write access to the Movies folder.")]
         public bool AllowMoviesReadWrite;
 
+#if UNITY_EDITOR_OSX || (UNITY_EDITOR && (UNITY_IOS || UNITY_TVOS || UNITY_STANDALONE_OSX))
         public override void OnProcessEntitlements(AppleBuildProfile appleBuildProfile, BuildTarget buildTarget, string pathToBuiltTarget, PlistDocument entitlements)
         {
             if (AppSandboxEntitlement)
                 entitlements.root.SetBoolean("com.apple.security.app-sandbox", true);
 
             // Network...
-            if(AllowNetworkServer)
+            if (AllowNetworkServer)
                 entitlements.root.SetBoolean("com.apple.security.network.server", true);
-            
-            if(AllowNetworkClient)
+
+            if (AllowNetworkClient)
                 entitlements.root.SetBoolean("com.apple.security.network.client", true);
-            
+
             // Hardware....
-            if(AllowCamera)
+            if (AllowCamera)
                 entitlements.root.SetBoolean("com.apple.security.device.camera", true);
-            
-            if(AllowMicrophone)
+
+            if (AllowMicrophone)
                 entitlements.root.SetBoolean("com.apple.security.device.microphone", true);
-            
-            if(AllowUsb)
+
+            if (AllowUsb)
                 entitlements.root.SetBoolean("com.apple.security.device.usb", true);
-            
-            if(AllowPrint)
+
+            if (AllowPrint)
                 entitlements.root.SetBoolean("com.apple.security.print", true);
-            
-            if(AllowBluetooth)
+
+            if (AllowBluetooth)
                 entitlements.root.SetBoolean("com.apple.security.device.bluetooth", true);
-            
+
             // AppData...
-            if(AllowAddressBook)
+            if (AllowAddressBook)
                 entitlements.root.SetBoolean("com.apple.security.personal-information.addressbook", true);
-            
-            if(AllowLocation)
+
+            if (AllowLocation)
                 entitlements.root.SetBoolean("com.apple.security.personal-information.location", true);
-            
-            if(AllowCalendars)
+
+            if (AllowCalendars)
                 entitlements.root.SetBoolean("com.apple.security.personal-information.calendars", true);
-            
+
             // File access...
-            if(AllowUserSelectedReadOnly)
+            if (AllowUserSelectedReadOnly)
                 entitlements.root.SetBoolean("com.apple.security.files.user-selected.read-only", true);
-            
-            if(AllowUserSelectedReadWrite)
+
+            if (AllowUserSelectedReadWrite)
                 entitlements.root.SetBoolean("com.apple.security.files.user-selected.read-write", true);
-            
-            if(AllowDownloadsReadOnly)
+
+            if (AllowDownloadsReadOnly)
                 entitlements.root.SetBoolean("com.apple.security.files.downloads.read-only", true);
-            
-            if(AllowDownloadsReadWrite)
+
+            if (AllowDownloadsReadWrite)
                 entitlements.root.SetBoolean("com.apple.security.files.downloads.read-write", true);
-            
-            if(AllowPicturesReadOnly)
+
+            if (AllowPicturesReadOnly)
                 entitlements.root.SetBoolean("com.apple.security.assets.pictures.read-only", true);
-            
-            if(AllowPicturesReadWrite)
+
+            if (AllowPicturesReadWrite)
                 entitlements.root.SetBoolean("com.apple.security.assets.pictures.read-write", true);
-            
-            if(AllowMusicReadOnly)
+
+            if (AllowMusicReadOnly)
                 entitlements.root.SetBoolean("com.apple.security.assets.music.read-only", true);
 
-            if(AllowMusicReadWrite)
+            if (AllowMusicReadWrite)
                 entitlements.root.SetBoolean("com.apple.security.assets.music.read-write", true);
-            
-            if(AllowMoviesReadOnly)
+
+            if (AllowMoviesReadOnly)
                 entitlements.root.SetBoolean("com.apple.security.assets.movies.read-only", true);
 
-            if(AllowMoviesReadWrite)
+            if (AllowMoviesReadWrite)
                 entitlements.root.SetBoolean("com.apple.security.assets.movies.read-write", true);
         }
+#endif
     }
 }
